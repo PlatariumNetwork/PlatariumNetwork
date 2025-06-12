@@ -1,15 +1,26 @@
 {
-  "name": "Platarium Network",
-  "version": "1.0.0",
+  "name": "platarium-network",
+  "version": "1.0.1",
+  "description": "Core module for Platarium Network cryptographic utilities",
   "main": "testWallet.js",
   "type": "module",
   "scripts": {
     "test": "mocha"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": ["crypto", "platarium", "wallet", "bip39", "hkdf"],
+  "author": "Platarium",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Platarium-com/PlatariumNetwork.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Platarium-com/PlatariumNetwork/issues"
+  },
+  "homepage": "https://github.com/Platarium-com/PlatariumNetwork#readme",
+  "publishConfig": {
+    "access": "public"
+  },
   "dependencies": {
     "bip39": "^3.1.0",
     "bn.js": "^5.2.2",
