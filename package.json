@@ -1,8 +1,8 @@
 {
   "name": "platarium-network",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Core module for Platarium Network cryptographic utilities",
-  "main": "testWallet.js",
+  "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "mocha"
