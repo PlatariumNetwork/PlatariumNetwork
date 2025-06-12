@@ -1,0 +1,22 @@
+{
+  "name": "Platarium Network",
+  "version": "1.0.0",
+  "main": "testWallet.js",
+  "type": "module",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "bip39": "^3.1.0",
+    "bn.js": "^5.2.2",
+    "futoin-hkdf": "^1.5.3"
+  },
+  "devDependencies": {
+    "chai": "^5.2.0",
+    "mocha": "^11.5.0"
+  }
+}
