@@ -12,17 +12,31 @@ export function verifyCorrelation(privateKeyHex, signatureKeyHex, masterSeed, hk
     if (!Buffer.isBuffer(masterSeed) || masterSeed.length === 0) {
       throw new ValidationError('masterSeed must be a non-empty Buffer');
     }
+
+    // Logging for key verification
+    console.log('Private Key Hex Length:', privateKeyHex.length);
+    console.log('Signature Key Hex Length:', signatureKeyHex.length);
+    console.log('Private Key Hex:', privateKeyHex);
+    console.log('Signature Key Hex:', signatureKeyHex);
+
     if (
       typeof privateKeyHex !== 'string' ||
       typeof signatureKeyHex !== 'string' ||
-      privateKeyHex.length !== 64 ||
+      privateKeyHex.length !== 6 ||
       signatureKeyHex.length !== 64
     ) {
       throw new ValidationError('Invalid format of private keys for verification');
     }
 
     const signatureSeed = deriveSignatureSeedFromMasterSeed(masterSeed, hkdfSalt, hkdfInfo);
+
+    // Logging for signatureSeed verification
+    console.log('Signature Seed:', signatureSeed);
+
     const derivedSigHex = bnToHex32(ec.keyFromPrivate(signatureSeed).getPrivate());
+
+    // Logging to verify the generated private key
+    console.log('Derived Private Key Hex:', derivedSigHex);
 
     const isMatch = derivedSigHex.toLowerCase() === signatureKeyHex.toLowerCase();
 
@@ -37,3 +51,4 @@ export function verifyCorrelation(privateKeyHex, signatureKeyHex, masterSeed, hk
     throw err;
   }
 }
+

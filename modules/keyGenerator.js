@@ -15,7 +15,7 @@ const ec = new EC('secp256k1');
 /** 
  * Custom error for parameter validation
  */
-class ValidationError extends Error {
+export class ValidationError extends Error {
   constructor(message) {
     super(message);
     this.name = 'ValidationError';
@@ -124,52 +124,7 @@ export class KeyGenerator {
       }
 
       const alphanumericPart = generateAlphanumericPart(10);
-      const masterSeed = bip39.mnemonicToSeedSync(mnemonic, alphanumericPart);
-
-      const root = hdkey.fromMasterSeed(masterSeed);
-      const mainPath = this.customPath || `m/44'/60'/0'/0/${this.seedIndex}`;
-      const mainNode = root.derive(mainPath);
-
-      if (!mainNode.privateKey) {
-        throw new Error('Private key is missing in mainNode');
-      }
-
-      const privateKeyHex = mainNode.privateKey.toString('hex').padStart(64, '0');
-
-      const signatureSeed = deriveSignatureSeedFromMasterSeed(masterSeed, this.hkdfSalt, this.hkdfInfo);
-      const signatureKey = ec.keyFromPrivate(signatureSeed);
-      const signaturePrivateKeyHex = bnToHex32(signatureKey.getPrivate());
-
-      const publicKeyHex = ec.keyFromPrivate(mainNode.privateKey).getPublic(true, 'hex');
-
-      // Call key correlation verification utility BEFORE wiping masterSeed
-      const isValid = verifyCorrelation(
-        privateKeyHex,
-        signaturePrivateKeyHex,
-        masterSeed,
-        this.hkdfSalt,
-        this.hkdfInfo
-      );
-
-      if (!isValid) {
-        throw new ValidationError('Key correlation verification failed');
-      }
-
-      masterSeed.fill(0);
-      signatureSeed.fill(0);
-      mainNode.privateKey.fill(0);
-
-      const result = {
-        mnemonic,
-        alphanumericPart, // Important to return the salt to save and restore the wallet
-        derivationPaths: {
-          mainPath,
-          signaturePath: 'HKDF-derived',
-        },
-        publicKey: `Px${publicKeyHex}`,
-        privateKey: `PSx${privateKeyHex}`,
-        signatureKey: `Sx${signaturePrivateKeyHex}`,
-      };
+      const result = this._buildKeysFromSeed(mnemonic, alphanumericPart, this.seedIndex, this.customPath);
 
       if (process.env.NODE_ENV !== 'production') {
         logInfo('KeyGenerator.generateKeys', {
@@ -192,7 +147,15 @@ export class KeyGenerator {
     }
   }
 
-  restoreKeys(mnemonic, alphanumericPart, seedIndex = 0, customPath = null) {
+  restoreKeys(mnemonic, alphanumericPart, seedIndex = this.seedIndex, customPath = this.customPath) {
+    if (!validateMnemonic(mnemonic)) {
+      throw new ValidationError('Provided mnemonic is not valid according to BIP39');
+    }
+
+    return this._buildKeysFromSeed(mnemonic, alphanumericPart, seedIndex, customPath);
+  }
+
+  _buildKeysFromSeed(mnemonic, alphanumericPart, seedIndex, customPath) {
     const masterSeed = bip39.mnemonicToSeedSync(mnemonic, alphanumericPart);
     const root = hdkey.fromMasterSeed(masterSeed);
     const mainPath = customPath || `m/44'/60'/0'/0/${seedIndex}`;
@@ -208,7 +171,6 @@ export class KeyGenerator {
     const signaturePrivateKeyHex = bnToHex32(signatureKey.getPrivate());
     const publicKeyHex = ec.keyFromPrivate(mainNode.privateKey).getPublic(true, 'hex');
 
-    // Call key correlation verification utility BEFORE wiping masterSeed
     const isValid = verifyCorrelation(
       privateKeyHex,
       signaturePrivateKeyHex,
@@ -224,7 +186,7 @@ export class KeyGenerator {
     signatureSeed.fill(0);
     mainNode.privateKey.fill(0);
 
-    const result = {
+    return {
       mnemonic,
       alphanumericPart,
       derivationPaths: {
@@ -235,7 +197,6 @@ export class KeyGenerator {
       privateKey: `PSx${privateKeyHex}`,
       signatureKey: `Sx${signaturePrivateKeyHex}`,
     };
-
-    return result;
   }
 }
+

@@ -1,5 +1,3 @@
-// node test-restore.js "very acid crime fix scrub come ensure gather bird inner erode nerve step maximum ignore sniff video lawn easily enjoy twenty bread enforce quarter" "UYFIMX5DY7"
-
 import { KeyGenerator } from './modules/keyGenerator.js';
 import { logError } from './setting/logger.js';
 

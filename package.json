@@ -1,13 +1,19 @@
 {
   "name": "platarium-network",
   "version": "1.0.2",
-  "description": "Core module for Platarium Network cryptographic utilities",
+  "description": "Core module for Platarium Network cryptographic",
   "main": "index.js",
   "type": "module",
   "scripts": {
     "test": "mocha"
   },
-  "keywords": ["crypto", "platarium", "wallet", "bip39", "hkdf"],
+  "keywords": [
+    "crypto",
+    "platarium",
+    "wallet",
+    "bip39",
+    "hkdf"
+  ],
   "author": "Platarium",
   "license": "MIT",
   "repository": {
@@ -22,12 +28,15 @@
     "access": "public"
   },
   "dependencies": {
+    "bip32": "^5.0.0-rc.0",
     "bip39": "^3.1.0",
     "bn.js": "^5.2.2",
-    "futoin-hkdf": "^1.5.3"
+    "elliptic": "^6.6.1",
+    "futoin-hkdf": "^1.5.3",
+    "tiny-secp256k1": "^2.2.4"
   },
   "devDependencies": {
     "chai": "^5.2.0",
-    "mocha": "^11.5.0"
+    "mocha": "^11.7.1"
   }
 }

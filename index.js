@@ -1,5 +1,4 @@
 // index.js
-
 // Export the key generator and utilities from modules/keyGenerator.js
 export { 
   KeyGenerator, 
@@ -16,3 +15,6 @@ export { verifyCorrelation } from './utils/verifyCorrelation.js';
 
 // For example from setting/logger.js, if needed
 export { logError, logInfo, ValidationError } from './setting/logger.js';
+
+// Export the signer function from signer.js
+export { signWithBothKeys } from './modules/signer.js';

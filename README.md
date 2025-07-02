@@ -16,7 +16,7 @@
 
 ### 📦 Install
 
-Clone the repository and install the dependencies:
+Clone the repository and install dependencies:
 
 ```bash
 git clone https://github.com/Platarium-com/PlatariumNetwork.git
@@ -66,6 +66,70 @@ const key = ec.keyFromPrivate(privateKey); // Create EC key instance
 const publicKey = key.getPublic().encode('hex'); // Public key in hex
 ```
 
+### 🖋 Dual-Key Signature Scheme
+Platarium Network uses a dual-key signature scheme to enhance security by signing messages with two distinct private keys derived from the same mnemonic seed phrase:
+
+## Master Seed Generation
+The mnemonic phrase (24 words) is converted into a 64-byte master seed using BIP-39 standard:
+```bash
+mnemonic phrase (24 words)
+            │
+            ▼
+    master seed (64 bytes)
+```
+
+## Deriving Two Private Keys
+From the master seed, two different private keys are derived:
+
+* Main Private Key:
+Derived by applying HKDF to the master seed with an info string prefixed with "mainKey-" concatenated with a user-provided alphanumeric string. This produces a unique 32-byte key.
+* HKDF-Derived Private Key:
+Similarly derived from the same master seed, but with an info string prefixed with "hkdfKey-" plus the same alphanumeric string. This ensures cryptographic separation from the main key.
+```bash
+master seed
+    │
+    ├── HKDF(masterSeed, info="mainKey-<alphanumericPart>") → mainPrivateKey (32 bytes)
+    │
+    └── HKDF(masterSeed, info="hkdfKey-<alphanumericPart>") → hkdfPrivateKey (32 bytes)
+```
+## Signing the Message
+The message object is hashed (e.g., SHA-256) to produce a fixed-length digest.
+
+Then, this hash is signed twice:
+
+* Once with the main private key.
+* Once with the HKDF-derived private key.
+```bash
+message ──hashMessage()──▶ message hash
+        │                      │
+        ▼                      ▼
+ sign with mainPrivateKey    sign with hkdfPrivateKey
+        │                      │
+        └──────────────┬───────┘
+                       ▼
+            combined signature result
+```
+## Result
+The function returns:
+
+* The original message,
+* Its hash,
+* An array of two signature objects, each containing the signature details (r, s, pub, der, signatureCompact) and the type (main or hkdf).
+
+This dual signature system provides layered security and key diversification, improving resistance against key compromise and enhancing cryptographic guarantees for Platarium Network decentralized applications.
+```bash
+import { signWithBothKeys } from './signWithBothKeys.js';
+
+const mnemonic = 'abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon about';
+const alphanumericPart = 'user1234';
+const message = { data: 'Important transaction data' };
+
+const signed = signWithBothKeys(message, mnemonic, alphanumericPart);
+
+console.log('Original Message:', signed.originalMessage);
+console.log('Message Hash:', signed.hash);
+console.log('Signatures:', signed.signatures);
+```
 ### 🧬 Philosophy
 
 Platarium aims to combine modern cryptographic standards with flexible, developer-friendly tooling to power scalable and secure dApps on a custom Smart Network.
