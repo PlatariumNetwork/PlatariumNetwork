@@ -1,6 +1,6 @@
 {
   "name": "platarium-network",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Core module for Platarium Network cryptographic",
   "main": "index.js",
   "type": "module",

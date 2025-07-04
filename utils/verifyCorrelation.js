@@ -22,7 +22,7 @@ export function verifyCorrelation(privateKeyHex, signatureKeyHex, masterSeed, hk
     if (
       typeof privateKeyHex !== 'string' ||
       typeof signatureKeyHex !== 'string' ||
-      privateKeyHex.length !== 6 ||
+      privateKeyHex.length !== 64 ||
       signatureKeyHex.length !== 64
     ) {
       throw new ValidationError('Invalid format of private keys for verification');
