@@ -33,6 +33,6 @@ export function signMessage(privateKey, message) {
     s: signature.s.toString(16).padStart(64, '0'),
     pub: Buffer.from(pubKey).toString('hex'),
     der: signature.toDERHex(),
-    signatureCompact: signature.toCompactHex() + '01', // Common compact+flag format
+    signatureCompact: signature.toCompactHex() + '01',
   };
 }

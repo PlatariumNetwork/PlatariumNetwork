@@ -33,6 +33,8 @@
     "bn.js": "^5.2.2",
     "elliptic": "^6.6.1",
     "futoin-hkdf": "^1.5.3",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1",
     "tiny-secp256k1": "^2.2.4"
   },
   "devDependencies": {

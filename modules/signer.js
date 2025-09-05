@@ -26,33 +26,18 @@ import { logError } from '../setting/logger.js';
  */
 export function signWithBothKeys(message, mnemonic, alphanumericPart) {
   try {
-    console.log('Generating master seed from mnemonic...');
     const seed = generateMasterSeed(mnemonic);
-    console.log('Master seed generated:', seed.toString('hex'));
 
-    console.log('Hashing message...');
     const hash = hashMessage(message);
-    console.log('Message hash:', hash);
 
-    // Define different info for main and hkdf keys so that the keys are different
     const mainKeyInfo = Buffer.from(`mainKey-${alphanumericPart}`);
     const hkdfKeyInfo = Buffer.from(`hkdfKey-${alphanumericPart}`);
 
-    // Derive main private key через HKDF
     const mainPrivateKey = deriveHkdfKey(seed, mainKeyInfo);
-    console.log('Main private key (HKDF derived):', mainPrivateKey.toString('hex'));
-
-    // Derive HKDF private key через HKDF з іншим info
     const hkdfPrivateKey = deriveHkdfKey(seed, hkdfKeyInfo);
-    console.log('HKDF-derived private key:', hkdfPrivateKey.toString('hex'));
 
-    console.log('Signing message with main private key...');
     const mainSignature = signMessage(mainPrivateKey, message);
-    console.log('Main signature:', mainSignature);
-
-    console.log('Signing message with HKDF private key...');
     const hkdfSignature = signMessage(hkdfPrivateKey, message);
-    console.log('HKDF signature:', hkdfSignature);
 
     return {
       originalMessage: message,

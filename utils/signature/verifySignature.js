@@ -15,6 +15,6 @@ export function verifySignature(message, signatureHex, pubKeyHex) {
     const signature = secp.Signature.fromDER(signatureHex);
     return signature.verify(hash, pubKeyHex);
   } catch {
-    return false; // Invalid signature format or verification failed
+    return false;
   }
 }
